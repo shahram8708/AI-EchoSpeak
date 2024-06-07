@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI EchoSpeak</title>
+    <style>
+        .chat-container {
+            margin: auto;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+
+        .chat-messages {
+            padding: 20px;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow-y: scroll;
+            height: 400px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .chat-messages {
+            scrollbar-width: thin;
+            scrollbar-color: #007bff #f9f9f9;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: #007bff;
+            border-radius: 10px;
+            border: 3px solid #f9f9f9;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background-color: #0056b3;
+        }
+
+        .chat-messages {
+            scrollbar-width: thin;
+            scrollbar-color: #007bff #f9f9f9;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 80%;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #999;
+        }
+
+        .popup h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .popup p {
+            margin-bottom: 10px;
+        }
+
+        .cancel-btn {
+            padding: 10px 20px;
+            background-color: #ff4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        .cancel-btn:hover {
+            background-color: #cc0000;
+        }
+
+        .chat-messages {
+            padding: 20px;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow-y: scroll;
+            height: 84vh;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+
+        .chat-message {
+            margin-bottom: 15px;
+        }
+
+        .sender-message {
+            background-color: #d4e6f1;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+        }
+
+        .receiver-message {
+            background-color: #c5e1a5;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+        }
+
+        .user-message {
+            text-align: right;
+            margin-bottom: 15px;
+        }
+
+        .bot-message {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            max-width: 70%;
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            font-size: 16px;
+        }
+
+        .user-message .message-bubble {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .bot-message .message-bubble {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #f5f5f5;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 16px;
+            display: none;
+        }
+
+        .chat-container h1 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        #submitBtn {
+            display: none;
+            background-color: #007bff;
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        #submitBtn:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        #recordBtn {
+            width: 50%;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        #recordBtn:hover {
+            background-color: #d32f2f;
+        }
+
+        #stopBtn {
+            background-color: #dc3545;
+            padding: 10px 20px;
+            color: white;
+            width: 50%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            padding: 10px 20px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        .cancel-btn:hover {
+            background-color: #cc0000;
+        }
+
+        #stopBtn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <ul class="chat-messages" id="responseContainer">
+        </ul>
+
+        <div class="input-container">
+            <input type="text" id="userInput" name="userInput" placeholder="Type your message..." autocomplete="off">
+            <button id="submitBtn">Send</button>
+            <button id="recordBtn">🎤 EchoSpeak</button>
+            <button id="stopBtn">⏹️ Stop</button>
+        </div>
+
+    </div>
+
+    <div class="popup" id="popup">
+        <div class="close-btn" onclick="closePopup()">X</div>
+        <h2>EchoSpeak Instructions</h2>
+        <p>1. Click on the microphone button to activate speech recognition.</p>
+        <p>2. Speak clearly and concisely into the microphone to dictate your query or command.</p>
+        <p>3. Wait for the system to process your input.</p>
+        <p>4. Receive the response in written text format on your screen.</p>
+        <button onclick="closePopup()" class="cancel-btn">Cancel</button>
+    </div>
+
+    <script>
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        var currentSpeech = null;
+
+        function addUserMessage(message) {
+            var chatMessages = document.getElementById('responseContainer');
+            var messageElement = document.createElement('li');
+            messageElement.classList.add('user-message');
+            var bubble = document.createElement('div');
+            bubble.classList.add('message-bubble');
+            bubble.textContent = message;
+            messageElement.appendChild(bubble);
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addBotMessage(message) {
+            var chatMessages = document.getElementById('responseContainer');
+            var messageElement = document.createElement('li');
+            messageElement.classList.add('bot-message');
+
+            var formattedMessage = message.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            formattedMessage = formattedMessage.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
+
+            var bubble = document.createElement('div');
+            bubble.classList.add('message-bubble');
+            bubble.innerHTML = formattedMessage;
+            messageElement.appendChild(bubble);
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            currentSpeech = new SpeechSynthesisUtterance(message);
+            window.speechSynthesis.speak(currentSpeech);
+        }
+
+
+        document.getElementById('submitBtn').onclick = function () {
+            var userInput = document.getElementById('userInput').value;
+            if (userInput.trim() === '') return;
+            addUserMessage(userInput);
+            document.getElementById('userInput').value = '';
+            fetch('/generate-content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userInput: userInput }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.response) {
+                        addBotMessage(data.response);
+                    } else {
+                        addBotMessage('No response found.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    addBotMessage('Error occurred. Please try again later.');
+                });
+        };
+
+        document.getElementById('userInput').addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                document.getElementById('submitBtn').click();
+            }
+        });
+
+        var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        document.getElementById('recordBtn').onclick = function () {
+            recognition.start();
+        };
+
+        recognition.onresult = function (event) {
+            var transcript = event.results[0][0].transcript;
+            document.getElementById('userInput').value = transcript;
+            document.getElementById('submitBtn').click();
+        };
+
+        recognition.onerror = function (event) {
+            addBotMessage('Error occurred in recognition: ' + event.error);
+        };
+
+        document.getElementById('stopBtn').onclick = function () {
+            if (currentSpeech) {
+                window.speechSynthesis.cancel();
+            }
+        };
+
+        window.addEventListener('beforeunload', function (e) {
+            var confirmationMessage = 'All data will be lost if you leave the page. Are you sure you want to reload?';
+            e.returnValue = confirmationMessage;
+            return confirmationMessage;
+        });
+    </script>
+
+</body>
+
+</html>
