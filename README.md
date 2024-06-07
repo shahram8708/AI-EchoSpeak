@@ -36,7 +36,7 @@ To run EchoSpeak locally, follow these steps:
 
 ## Contributors
 
-- [Your Name](https://github.com/shahram8708/) - Developer
+- [Shah Ram](https://github.com/shahram8708/) - Developer
 
 ## License
 
